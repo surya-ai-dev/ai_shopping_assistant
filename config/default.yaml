@@ -1,0 +1,30 @@
+system:
+  app_name: "AI Shopping Copilot Distributed Scraper"
+  version: "0.1.0"
+
+collector_defaults:
+  rate_limit_per_minute: 30
+  max_retries: 3
+  backoff_factor: 2.0
+  navigation_timeout_ms: 30000
+  wait_until: "domcontentloaded"
+  user_agent_rotation: true
+  quality_thresholds:
+    min_completeness_score: 0.6
+    min_overall_score: 0.65
+    min_parse_confidence: 0.7
+
+browser_defaults:
+  viewport_width: 1920
+  viewport_height: 1080
+  device_scale_factor: 1
+  is_mobile: false
+  has_touch: false
+
+deduplication:
+  similarity_threshold: 0.92
+  check_across_sites: true
+
+raw_storage:
+  compression: false
+  retention_days: 30
