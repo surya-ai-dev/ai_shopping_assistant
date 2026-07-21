@@ -1,6 +1,7 @@
 """Abstract Base Class for extracting domain Product models from raw web content."""
 
 from abc import ABC, abstractmethod
+from typing import Any
 
 from bs4 import BeautifulSoup
 
@@ -38,6 +39,21 @@ class BaseParser(ABC):
             Populated Product domain model.
         """
         pass
+
+    def normalize(self, raw_data: dict[str, Any]) -> dict[str, Any]:
+        """Normalize raw dictionary attributes (currency, whitespace, URLs, specification keys)."""
+        normalized = dict(raw_data)
+        for k, v in normalized.items():
+            if isinstance(v, str):
+                normalized[k] = v.strip()
+        return normalized
+
+    def _find_spec(self, specs: dict[str, Any], keys: list[str]) -> Any:
+        """Find the first matching key in normalized specs dictionary."""
+        for k in keys:
+            if k in specs:
+                return specs[k]
+        return None
 
     def create_soup(self, html_content: str) -> BeautifulSoup:
         """Utility method to instantiate a BeautifulSoup object using lxml or html.parser."""

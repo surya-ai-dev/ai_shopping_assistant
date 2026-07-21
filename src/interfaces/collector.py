@@ -1,6 +1,5 @@
-"""Abstract Base Class for site-specific page collectors."""
-
 from abc import ABC, abstractmethod
+from typing import Protocol, runtime_checkable
 
 from playwright.async_api import Page, Response
 
@@ -9,11 +8,46 @@ from src.domain.enums import CategoryEnum
 from src.domain.models.url import DiscoveredURL
 
 
+@runtime_checkable
+class CollectorInterface(Protocol):
+    """Protocol defining the interface all collectors must implement."""
+
+    @property
+    def site_id(self) -> str:
+        ...
+
+    @property
+    def supported_category(self) -> CategoryEnum:
+        ...
+
+    @property
+    def supported_domains(self) -> list[str]:
+        ...
+
+    async def setup(self) -> None:
+        ...
+
+    async def teardown(self) -> None:
+        ...
+
+    async def health_check(self, page: Page) -> bool:
+        ...
+
+    async def discover_urls(self, page: Page, seed_url: str) -> list[DiscoveredURL]:
+        ...
+
+    async def fetch_page(self, page: Page, url: str) -> Response | None:
+        ...
+
+    async def crawl(self, page: Page, seed_url: str) -> list[DiscoveredURL]:
+        ...
+
+
 class BaseCollector(ABC):
     """Abstract Base Class defining the contract for all website collectors.
 
     Every website collector subclass must implement `site_id`, `supported_category`,
-    `discover_urls()`, and `fetch_page()`.
+    `supported_domains`, `discover_urls()`, and `fetch_page()`.
     """
 
     def __init__(self, request_manager: RequestManager | None = None) -> None:
@@ -29,6 +63,12 @@ class BaseCollector(ABC):
     @abstractmethod
     def supported_category(self) -> CategoryEnum:
         """Category type supported by this collector."""
+        pass
+
+    @property
+    @abstractmethod
+    def supported_domains(self) -> list[str]:
+        """List of domains supported by this collector."""
         pass
 
     @abstractmethod
@@ -71,3 +111,7 @@ class BaseCollector(ABC):
             Playwright Response object or None.
         """
         pass
+
+    async def crawl(self, page: Page, seed_url: str) -> list[DiscoveredURL]:
+        """Crawl target seed URL or list page to discover product URLs."""
+        return await self.discover_urls(page, seed_url)

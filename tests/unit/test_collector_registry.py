@@ -1,17 +1,29 @@
 """Unit tests for Collector Registry and Plugin Auto-Discovery."""
 
 import pytest
+from playwright.async_api import Page, Response
 
 from src.core.exceptions import CollectorNotFoundError
 from src.domain.enums import CategoryEnum
+from src.domain.models.product import Product
+from src.domain.models.url import DiscoveredURL
 from src.engine.registry import CollectorRegistry
 from src.interfaces.collector import BaseCollector
 from src.interfaces.parser import BaseParser
 
 
 class MockCollector(BaseCollector):
-    site_id = "mock_site"
-    supported_category = CategoryEnum.LAPTOP
+    @property
+    def site_id(self) -> str:
+        return "mock_site"
+
+    @property
+    def supported_category(self) -> CategoryEnum:
+        return CategoryEnum.LAPTOP
+
+    @property
+    def supported_domains(self) -> list[str]:
+        return ["mock.com"]
 
     async def setup(self) -> None:
         pass
@@ -19,21 +31,26 @@ class MockCollector(BaseCollector):
     async def teardown(self) -> None:
         pass
 
-    async def health_check(self, page) -> bool:
+    async def health_check(self, page: Page) -> bool:
         return True
 
-    async def discover_urls(self, page, seed_url):
+    async def discover_urls(self, page: Page, seed_url: str) -> list[DiscoveredURL]:
         return []
 
-    async def fetch_page(self, page, url):
+    async def fetch_page(self, page: Page, url: str) -> Response | None:
         return None
 
 
 class MockParser(BaseParser):
-    site_id = "mock_site"
-    supported_category = CategoryEnum.LAPTOP
+    @property
+    def site_id(self) -> str:
+        return "mock_site"
 
-    async def parse(self, html_content: str, url: str, raw_payload_id=None):
+    @property
+    def supported_category(self) -> CategoryEnum:
+        return CategoryEnum.LAPTOP
+
+    async def parse(self, html_content: str, url: str, raw_payload_id: str | None = None) -> Product:
         raise NotImplementedError()
 
 
