@@ -9,6 +9,12 @@ from alembic import context
 from src.config.settings import get_settings
 from src.infrastructure.db.base import Base
 
+# # Register all models for Alembic autogenerate tracking
+# from src.infrastructure.db.models import *
+# from src.models import *
+# # Register Phase 6 models
+from src.models import *
+
 # Alembic Config object
 config = context.config
 
