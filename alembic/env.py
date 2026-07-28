@@ -5,15 +5,27 @@ from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
-from alembic import context
-from src.config.settings import get_settings
-from src.infrastructure.db.base import Base
-
 # # Register all models for Alembic autogenerate tracking
 # from src.infrastructure.db.models import *
 # from src.models import *
-# # Register Phase 6 models
-from src.models import *
+# from src.models import (
+#     Category,
+#     Merchant,
+#     Notification,
+#     PriceHistory,
+#     Product,
+#     ProductImage,
+#     ProductPrice,
+#     ProductReview,
+#     SearchHistory,
+#     User,
+#     Wishlist,
+#     WishlistItem,
+# )
+import src.models  # noqa: F401
+from alembic import context
+from src.config.settings import get_settings
+from src.infrastructure.db.base import Base
 
 # Alembic Config object
 config = context.config

@@ -4,10 +4,10 @@ This module houses the ProductPrice table representing current merchant offers,
 pricing, inventory state, and URLs.
 """
 
+import uuid
 from datetime import datetime
 from decimal import Decimal
-from typing import TYPE_CHECKING, List
-import uuid
+from typing import TYPE_CHECKING
 
 from sqlalchemy import Boolean, CheckConstraint, DateTime, Enum, ForeignKey, Numeric, Text, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID
@@ -76,7 +76,7 @@ class ProductPrice(BaseModel, UUIDMixin, TimestampMixin, SoftDeleteMixin):
         "Merchant",
         back_populates="prices",
     )
-    price_histories: Mapped[List["PriceHistory"]] = relationship(
+    price_histories: Mapped[list["PriceHistory"]] = relationship(
         "PriceHistory",
         back_populates="product_price",
         cascade="all, delete-orphan",

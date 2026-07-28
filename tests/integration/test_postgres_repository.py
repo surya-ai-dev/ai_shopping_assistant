@@ -2,18 +2,18 @@
 
 import pytest
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
+from src.config.settings import get_settings
 from src.database.base import Base
 from src.domain.enums import CategoryEnum, CurrencyEnum
-from src.domain.models.product import Product, PriceHistory, ProductFingerprint
+from src.domain.models.product import Product, ProductFingerprint
 from src.domain.models.specs import LaptopSpecs
-from src.repositories.postgres.product import PostgresProductRepository
-from src.config.settings import get_settings
 from src.orm.models import ProductORM
+from src.repositories.postgres.product import PostgresProductRepository
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 def db_url() -> str:
     """Get database URL for integration tests."""
     settings = get_settings()
@@ -23,7 +23,7 @@ def db_url() -> str:
     return url
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 async def test_engine(db_url: str):
     """Create a clean database engine and schema for tests."""
     engine = create_async_engine(db_url, echo=False)

@@ -4,8 +4,8 @@ This module houses the self-referential Category table, representing a
 hierarchical category taxonomy tree for product organization.
 """
 
-from typing import TYPE_CHECKING, List, Optional
 import uuid
+from typing import TYPE_CHECKING, Optional
 
 from sqlalchemy import ForeignKey, String, Text, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID
@@ -33,11 +33,11 @@ class Category(BaseModel, UUIDMixin, TimestampMixin, SoftDeleteMixin):
         index=True,
         nullable=False,
     )
-    description: Mapped[Optional[str]] = mapped_column(
+    description: Mapped[str | None] = mapped_column(
         Text,
         nullable=True,
     )
-    parent_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+    parent_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("categories.id", ondelete="CASCADE"),
         index=True,
@@ -50,13 +50,14 @@ class Category(BaseModel, UUIDMixin, TimestampMixin, SoftDeleteMixin):
         remote_side="Category.id",
         back_populates="children",
     )
-    children: Mapped[List["Category"]] = relationship(
+    children: Mapped[list["Category"]] = relationship(
         "Category",
         back_populates="parent",
         cascade="all, delete-orphan",
         passive_deletes=True,
+        lazy="immediate",
     )
-    products: Mapped[List["Product"]] = relationship(
+    products: Mapped[list["Product"]] = relationship(
         "Product",
         back_populates="category",
         cascade="save-update, merge",

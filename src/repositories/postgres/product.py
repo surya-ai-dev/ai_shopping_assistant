@@ -1,16 +1,18 @@
 """PostgreSQL implementation of ProductRepositoryInterface."""
 
+import builtins
 import uuid
 from datetime import UTC, datetime
-from sqlalchemy import select, func
+
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from src.core.exceptions import RepositoryError
 from src.domain.models.product import Product
 from src.interfaces.repository import ProductRepositoryInterface
-from src.orm.models import ImageORM, PriceHistoryORM, ProductFingerprintORM, ProductORM, SpecificationORM
 from src.mappers.product import domain_to_orm, orm_to_domain
+from src.orm.models import ImageORM, PriceHistoryORM, ProductFingerprintORM, ProductORM
 
 
 class PostgresProductRepository(ProductRepositoryInterface):
@@ -96,13 +98,27 @@ class PostgresProductRepository(ProductRepositoryInterface):
             raise ValueError("Product must have a valid ID to be updated")
 
         try:
-            stmt = select(ProductORM).where(ProductORM.id == product.id)
+            stmt = (
+                select(ProductORM)
+                .options(
+                    selectinload(ProductORM.specs),
+                    selectinload(ProductORM.price_history),
+                    selectinload(ProductORM.images),
+                    selectinload(ProductORM.fingerprint),
+                )
+                .where(ProductORM.id == product.id)
+            )
             res = await self.session.execute(stmt)
             orm = res.scalar_one_or_none()
             if not orm:
                 raise ValueError(f"Product with ID '{product.id}' not found for update")
 
             # Update the direct fields
+            orm.title = product.title
+            orm.brand = product.brand
+            orm.model_name = product.model_name
+            orm.category = product.category.value
+            orm.sku = product.sku
             orm.current_price = product.current_price
             orm.original_price = product.original_price
             orm.is_in_stock = product.is_in_stock
@@ -119,15 +135,7 @@ class PostgresProductRepository(ProductRepositoryInterface):
                 orm.specs.updated_at = datetime.now(UTC)
 
             # Replace images
-            # Clear old images
-            stmt_images = select(ImageORM).where(ImageORM.product_id == orm.id)
-            res_images = await self.session.execute(stmt_images)
-            for img in res_images.scalars():
-                await self.session.delete(img)
-
-            # Add new images
-            for url in product.image_urls:
-                self.session.add(ImageORM(product_id=orm.id, url=url))
+            orm.images = [ImageORM(product_id=orm.id, url=url) for url in product.image_urls]
 
             # Add PriceHistory record
             price_history_entry = PriceHistoryORM(
@@ -138,7 +146,7 @@ class PostgresProductRepository(ProductRepositoryInterface):
                 is_in_stock=product.is_in_stock,
                 timestamp=datetime.now(UTC),
             )
-            self.session.add(price_history_entry)
+            orm.price_history.append(price_history_entry)
 
             # Update fingerprint if changed
             if product.fingerprint:
@@ -202,6 +210,11 @@ class PostgresProductRepository(ProductRepositoryInterface):
     async def exists(self, entity_id: str) -> bool:
         """Check if Product exists by ID."""
         try:
+            uuid.UUID(entity_id)
+        except ValueError:
+            return False
+
+        try:
             stmt = select(ProductORM.id).where(ProductORM.id == entity_id)
             res = await self.session.execute(stmt)
             return res.scalar_one_or_none() is not None
@@ -252,6 +265,19 @@ class PostgresProductRepository(ProductRepositoryInterface):
                 if not product.id:
                     product.id = str(uuid.uuid4())
                 orm = domain_to_orm(product)
+                
+                # Record initial price history entry if none exists
+                if not orm.price_history:
+                    ph = PriceHistoryORM(
+                        product_id=orm.id,
+                        price=product.current_price,
+                        original_price=product.original_price,
+                        currency=product.currency.value,
+                        is_in_stock=product.is_in_stock,
+                        timestamp=datetime.now(UTC),
+                    )
+                    orm.price_history.append(ph)
+                
                 self.session.add(orm)
                 await self.session.flush()
 
@@ -264,7 +290,7 @@ class PostgresProductRepository(ProductRepositoryInterface):
                 f"Failed to upsert product {product.url}", details={"error": str(exc)}
             ) from exc
 
-    async def bulk_insert(self, products: list[Product]) -> list[Product]:
+    async def bulk_insert(self, products: builtins.list[Product]) -> builtins.list[Product]:
         """Bulk insert multiple products. Wraps in single transaction."""
         inserted_products = []
         try:
@@ -272,6 +298,19 @@ class PostgresProductRepository(ProductRepositoryInterface):
                 if not product.id:
                     product.id = str(uuid.uuid4())
                 orm = domain_to_orm(product)
+                
+                # Record initial price history entry if none exists
+                if not orm.price_history:
+                    ph = PriceHistoryORM(
+                        product_id=orm.id,
+                        price=product.current_price,
+                        original_price=product.original_price,
+                        currency=product.currency.value,
+                        is_in_stock=product.is_in_stock,
+                        timestamp=datetime.now(UTC),
+                    )
+                    orm.price_history.append(ph)
+                
                 self.session.add(orm)
                 inserted_products.append(orm)
             await self.session.flush()
@@ -292,7 +331,7 @@ class PostgresProductRepository(ProductRepositoryInterface):
         except Exception as exc:
             raise RepositoryError("Failed to bulk insert products", details={"error": str(exc)}) from exc
 
-    async def bulk_upsert(self, products: list[Product]) -> list[Product]:
+    async def bulk_upsert(self, products: builtins.list[Product]) -> builtins.list[Product]:
         """Bulk upsert multiple products, avoiding duplicates."""
         upserted_products = []
         try:

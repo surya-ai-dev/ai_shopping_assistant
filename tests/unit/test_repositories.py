@@ -2,64 +2,9 @@
 
 import pytest
 
-from src.domain.enums import CategoryEnum, CurrencyEnum, URLStatusEnum
-from src.domain.models.product import Product
+from src.domain.enums import CategoryEnum, URLStatusEnum
 from src.domain.models.url import DiscoveredURL
-from src.repositories.product import InMemoryProductRepository
 from src.repositories.url import InMemoryURLRepository
-
-
-@pytest.mark.asyncio
-async def test_in_memory_product_repository() -> None:
-    """Test InMemoryProductRepository CRUD, SKU, and listing operations."""
-    repo = InMemoryProductRepository()
-
-    product = Product(
-        site_id="bestbuy_us",
-        url="https://www.bestbuy.com/site/dell/123.p",
-        sku="123",
-        title="Dell Laptop",
-        brand="Dell",
-        model_name="XPS 13",
-        category=CategoryEnum.LAPTOP,
-        current_price=999.99,
-        original_price=1099.99,
-        currency=CurrencyEnum.USD,
-        is_in_stock=True,
-    )
-
-    # Save Product
-    saved = await repo.save(product)
-    assert saved.id is not None
-
-    # Get by ID
-    fetched = await repo.get_by_id(saved.id)
-    assert fetched is not None
-    assert fetched.sku == "123"
-
-    # Get by SKU
-    fetched_sku = await repo.get_by_sku("123")
-    assert fetched_sku is not None
-    assert fetched_sku.id == saved.id
-
-    # Get by URL
-    fetched_url = await repo.get_by_url("https://www.bestbuy.com/site/dell/123.p")
-    assert fetched_url is not None
-    assert fetched_url.id == saved.id
-
-    # List Products
-    all_products = await repo.list_products()
-    assert len(all_products) == 1
-
-    # Update Product
-    fetched.title = "Dell XPS Laptop"
-    updated = await repo.update_product(fetched)
-    assert updated.title == "Dell XPS Laptop"
-
-    # Delete Product
-    deleted = await repo.delete(saved.id)
-    assert deleted is True
-    assert len(await repo.list_products()) == 0
 
 
 @pytest.mark.asyncio

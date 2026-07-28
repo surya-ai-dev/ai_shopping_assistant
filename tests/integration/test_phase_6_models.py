@@ -6,15 +6,14 @@ check constraints, and database validation bounds under a live PostgreSQL transa
 
 from datetime import UTC, datetime
 from decimal import Decimal
+
 import pytest
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from src.config.settings import get_settings
 from src.infrastructure.db.base import Base
-# Register all models by importing the package
-from src.infrastructure.db.models import *
 from src.models import (
     Category,
     Currency,
@@ -38,7 +37,7 @@ from src.models import (
 )
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 def db_url() -> str:
     """Get database URL for integration tests."""
     settings = get_settings()
@@ -48,7 +47,7 @@ def db_url() -> str:
     return url
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 async def test_engine(db_url: str):
     """Create a clean database engine and schema for Phase 6 tests."""
     engine = create_async_engine(db_url, echo=False)

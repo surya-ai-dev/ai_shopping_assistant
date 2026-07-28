@@ -4,10 +4,10 @@ This module houses the PriceHistory table representing a time-series log of
 price and stock changes for merchant offers.
 """
 
+import uuid
 from datetime import datetime
 from decimal import Decimal
 from typing import TYPE_CHECKING
-import uuid
 
 from sqlalchemy import Boolean, CheckConstraint, DateTime, Enum, ForeignKey, Index, Numeric
 from sqlalchemy.dialects.postgresql import UUID

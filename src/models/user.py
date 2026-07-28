@@ -65,6 +65,7 @@ class User(BaseModel, UUIDMixin, TimestampMixin, SoftDeleteMixin):
         back_populates="user",
         cascade="all, delete-orphan",
         passive_deletes=True,
+        lazy="selectin",
     )
     search_histories: Mapped[list["SearchHistory"]] = relationship(
         "SearchHistory",
@@ -77,6 +78,7 @@ class User(BaseModel, UUIDMixin, TimestampMixin, SoftDeleteMixin):
         back_populates="user",
         cascade="all, delete-orphan",
         passive_deletes=True,
+        lazy="selectin",
     )
     reviews: Mapped[list["ProductReview"]] = relationship(
         "ProductReview",

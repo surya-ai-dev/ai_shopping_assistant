@@ -4,9 +4,9 @@ This module houses the SearchHistory table logging user search inputs,
 filters, and results counts for AI recommendations.
 """
 
-from datetime import datetime
-from typing import TYPE_CHECKING, Any, Dict
 import uuid
+from datetime import datetime
+from typing import TYPE_CHECKING, Any
 
 from sqlalchemy import CheckConstraint, DateTime, ForeignKey, Index, Integer, Text
 from sqlalchemy.dialects.postgresql import JSONB, UUID
@@ -34,7 +34,7 @@ class SearchHistory(BaseModel, UUIDMixin, TimestampMixin, SoftDeleteMixin):
         Text,
         nullable=False,
     )
-    filters: Mapped[Dict[str, Any]] = mapped_column(
+    filters: Mapped[dict[str, Any]] = mapped_column(
         JSONB,
         default=dict,
         nullable=False,

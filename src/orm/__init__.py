@@ -1,5 +1,5 @@
 """ORM Models package."""
 
-from src.orm.models import ProductORM, SpecificationORM, PriceHistoryORM, ImageORM, ProductFingerprintORM
+from src.orm.models import ImageORM, PriceHistoryORM, ProductFingerprintORM, ProductORM, SpecificationORM
 
-__all__ = ["ProductORM", "SpecificationORM", "PriceHistoryORM", "ImageORM", "ProductFingerprintORM"]
+__all__ = ["ImageORM", "PriceHistoryORM", "ProductFingerprintORM", "ProductORM", "SpecificationORM"]

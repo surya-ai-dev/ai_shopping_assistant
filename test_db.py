@@ -2,6 +2,7 @@
 
 import asyncio
 import sys
+
 from src.infrastructure.db.session import check_db_health, close_db_engine
 
 

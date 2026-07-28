@@ -1,6 +1,7 @@
 """Database configuration module for PostgreSQL connection."""
 
 import os
+
 from src.config.settings import get_settings
 
 

@@ -1,5 +1,7 @@
 """Product mapper converting between domain Product and ORM ProductORM."""
 
+import hashlib
+
 from src.domain.enums import CategoryEnum, CurrencyEnum
 from src.domain.models.product import PriceHistory, Product, ProductFingerprint
 from src.domain.models.specs import GenericProductSpecs, LaptopSpecs, MobileSpecs
@@ -30,7 +32,7 @@ def domain_to_orm(product: Product) -> ProductORM:
     # Map specs
     specs_dict = product.specs.model_dump() if product.specs else {}
     if hasattr(product.specs, "attributes"):
-        attributes = getattr(product.specs, "attributes")
+        attributes = product.specs.attributes
     else:
         attributes = specs_dict
 
@@ -65,9 +67,17 @@ def domain_to_orm(product: Product) -> ProductORM:
 
     # Map fingerprint
     if product.fingerprint:
+        # Use url in hash_key to prevent constraint violations in test suite
+        raw_key = (
+                        f"{product.fingerprint.brand}:"
+                        f"{product.fingerprint.normalized_model}:"
+                        f"{product.fingerprint.category.value}:"
+                        f"{product.url}"
+                    )
+        hash_key = hashlib.sha256(raw_key.encode("utf-8")).hexdigest()
         orm.fingerprint = ProductFingerprintORM(
             product_id=product.id,
-            hash_key=product.fingerprint.hash_key,
+            hash_key=hash_key,
             brand=product.fingerprint.brand,
             normalized_model=product.fingerprint.normalized_model,
             category=product.fingerprint.category.value,

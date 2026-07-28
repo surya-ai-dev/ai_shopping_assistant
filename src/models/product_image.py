@@ -4,8 +4,8 @@ This module houses the ProductImage table, representing product-associated
 images, alt-text descriptions, and ordering sequences.
 """
 
-from typing import TYPE_CHECKING, Optional
 import uuid
+from typing import TYPE_CHECKING
 
 from sqlalchemy import ForeignKey, Integer, String, Text
 from sqlalchemy.dialects.postgresql import UUID
@@ -33,7 +33,7 @@ class ProductImage(BaseModel, UUIDMixin, TimestampMixin, SoftDeleteMixin):
         Text,
         nullable=False,
     )
-    alt_text: Mapped[Optional[str]] = mapped_column(
+    alt_text: Mapped[str | None] = mapped_column(
         String(255),
         nullable=True,
     )

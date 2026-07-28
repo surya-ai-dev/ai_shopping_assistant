@@ -4,10 +4,10 @@ This module houses the WishlistItem intersection table linking wishlists to prod
 with support for target alerts (desired_price).
 """
 
+import uuid
 from datetime import datetime
 from decimal import Decimal
-from typing import TYPE_CHECKING, Optional
-import uuid
+from typing import TYPE_CHECKING
 
 from sqlalchemy import CheckConstraint, DateTime, ForeignKey, Numeric, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID
@@ -38,7 +38,7 @@ class WishlistItem(BaseModel, UUIDMixin, TimestampMixin, SoftDeleteMixin):
         index=True,
         nullable=False,
     )
-    desired_price: Mapped[Optional[Decimal]] = mapped_column(
+    desired_price: Mapped[Decimal | None] = mapped_column(
         Numeric(10, 2),
         nullable=True,
     )

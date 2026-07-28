@@ -4,9 +4,9 @@ This module houses the Notification table representing user inbox messages,
 alerts (price drop, stock updates), read states, and links.
 """
 
-from datetime import datetime
-from typing import TYPE_CHECKING, Optional
 import uuid
+from datetime import datetime
+from typing import TYPE_CHECKING
 
 from sqlalchemy import Boolean, DateTime, Enum, ForeignKey, Index, String, Text
 from sqlalchemy.dialects.postgresql import UUID
@@ -48,7 +48,7 @@ class Notification(BaseModel, UUIDMixin, TimestampMixin, SoftDeleteMixin):
         default=False,
         nullable=False,
     )
-    link: Mapped[Optional[str]] = mapped_column(
+    link: Mapped[str | None] = mapped_column(
         Text,
         nullable=True,
     )

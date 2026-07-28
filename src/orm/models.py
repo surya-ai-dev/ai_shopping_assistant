@@ -1,10 +1,13 @@
 """SQLAlchemy ORM models for Phase 5 persistence."""
 
 import uuid
+from datetime import datetime
 from typing import Any
-from sqlalchemy import Boolean, Float, ForeignKey, Index, Integer, String, Text, DateTime
+
+from sqlalchemy import Boolean, DateTime, Float, ForeignKey, Index, Integer, String, Text
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from src.database.base import Base, TimestampMixin
 
 
@@ -101,7 +104,7 @@ class PriceHistoryORM(Base, TimestampMixin):
     currency: Mapped[str] = mapped_column(String(8), default="USD", nullable=False)
     is_in_stock: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     seller_name: Mapped[str | None] = mapped_column(String(128), nullable=True)
-    timestamp: Mapped[DateTime] = mapped_column(DateTime(timezone=True), nullable=False)
+    timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
 
     product: Mapped["ProductORM"] = relationship("ProductORM", back_populates="price_history")
 

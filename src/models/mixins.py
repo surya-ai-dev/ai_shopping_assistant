@@ -6,7 +6,6 @@ soft-delete support, and audit tracking to promote DRY design and schema consist
 
 import uuid
 from datetime import UTC, datetime
-from typing import Any
 
 from sqlalchemy import Boolean, DateTime, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID

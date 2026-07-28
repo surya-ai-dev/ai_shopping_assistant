@@ -1,9 +1,11 @@
 """SQLAlchemy Async Engine connection management."""
 
 from functools import lru_cache
+
 from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
-from src.database.config import get_db_config
+
 from src.core.logging import get_logger
+from src.database.config import get_db_config
 
 logger = get_logger(__name__)
 

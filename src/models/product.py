@@ -4,8 +4,8 @@ This module houses the canonical Product table representing items in the catalog
 their specifications (via JSONB attributes), and relationships.
 """
 
-from typing import TYPE_CHECKING, Any, List, Optional
 import uuid
+from typing import TYPE_CHECKING, Any, Optional
 
 from sqlalchemy import Enum, ForeignKey, Index, String, Text
 from sqlalchemy.dialects.postgresql import JSONB, UUID
@@ -32,21 +32,21 @@ class Product(BaseModel, UUIDMixin, TimestampMixin, SoftDeleteMixin):
         Text,
         nullable=False,
     )
-    description: Mapped[Optional[str]] = mapped_column(
+    description: Mapped[str | None] = mapped_column(
         Text,
         nullable=True,
     )
-    brand: Mapped[Optional[str]] = mapped_column(
+    brand: Mapped[str | None] = mapped_column(
         String(100),
         index=True,
         nullable=True,
     )
-    model_name: Mapped[Optional[str]] = mapped_column(
+    model_name: Mapped[str | None] = mapped_column(
         String(100),
         index=True,
         nullable=True,
     )
-    sku: Mapped[Optional[str]] = mapped_column(
+    sku: Mapped[str | None] = mapped_column(
         String(128),
         index=True,
         nullable=True,
@@ -56,7 +56,7 @@ class Product(BaseModel, UUIDMixin, TimestampMixin, SoftDeleteMixin):
         default=ProductStatus.ACTIVE,
         nullable=False,
     )
-    category_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+    category_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("categories.id", ondelete="SET NULL"),
         index=True,
@@ -73,26 +73,26 @@ class Product(BaseModel, UUIDMixin, TimestampMixin, SoftDeleteMixin):
         "Category",
         back_populates="products",
     )
-    images: Mapped[List["ProductImage"]] = relationship(
+    images: Mapped[list["ProductImage"]] = relationship(
         "ProductImage",
         back_populates="product",
         cascade="all, delete-orphan",
         passive_deletes=True,
         order_by="ProductImage.position.asc()",
     )
-    prices: Mapped[List["ProductPrice"]] = relationship(
+    prices: Mapped[list["ProductPrice"]] = relationship(
         "ProductPrice",
         back_populates="product",
         cascade="all, delete-orphan",
         passive_deletes=True,
     )
-    reviews: Mapped[List["ProductReview"]] = relationship(
+    reviews: Mapped[list["ProductReview"]] = relationship(
         "ProductReview",
         back_populates="product",
         cascade="all, delete-orphan",
         passive_deletes=True,
     )
-    wishlist_items: Mapped[List["WishlistItem"]] = relationship(
+    wishlist_items: Mapped[list["WishlistItem"]] = relationship(
         "WishlistItem",
         back_populates="product",
         cascade="all, delete-orphan",

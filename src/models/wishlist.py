@@ -4,8 +4,8 @@ This module houses the Wishlist table representing user-curated product folders
 and sharing visibility scopes.
 """
 
-from typing import TYPE_CHECKING, List, Optional
 import uuid
+from typing import TYPE_CHECKING
 
 from sqlalchemy import Enum, ForeignKey, String, Text
 from sqlalchemy.dialects.postgresql import UUID
@@ -35,7 +35,7 @@ class Wishlist(BaseModel, UUIDMixin, TimestampMixin, SoftDeleteMixin):
         String(100),
         nullable=False,
     )
-    description: Mapped[Optional[str]] = mapped_column(
+    description: Mapped[str | None] = mapped_column(
         Text,
         nullable=True,
     )
@@ -50,7 +50,7 @@ class Wishlist(BaseModel, UUIDMixin, TimestampMixin, SoftDeleteMixin):
         "User",
         back_populates="wishlists",
     )
-    items: Mapped[List["WishlistItem"]] = relationship(
+    items: Mapped[list["WishlistItem"]] = relationship(
         "WishlistItem",
         back_populates="wishlist",
         cascade="all, delete-orphan",
