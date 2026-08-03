@@ -1,9 +1,10 @@
 """Abstract base contract for managing conversation and user session memory."""
 
 from collections.abc import Sequence
-from typing import Any, Protocol
+from typing import Any, Protocol, runtime_checkable
 
 
+@runtime_checkable
 class BaseMemory(Protocol):
     """Protocol defining persistence boundaries for short-term and preference memory."""
 

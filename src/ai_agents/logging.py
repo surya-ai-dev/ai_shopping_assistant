@@ -55,8 +55,20 @@ class AILogger:
             trace_id=kwargs.get("trace_id") or self._context.get("trace_id"),
         )
         # Copy other keys
-        new_logger._context.update({k: v for k, v in self._context.items() if k not in ["request_id", "conversation_id", "trace_id"]})
-        new_logger._context.update({k: v for k, v in kwargs.items() if k not in ["request_id", "conversation_id", "trace_id"]})
+        new_logger._context.update(
+            {
+                k: v
+                for k, v in self._context.items()
+                if k not in ["request_id", "conversation_id", "trace_id"]
+            }
+        )
+        new_logger._context.update(
+            {
+                k: v
+                for k, v in kwargs.items()
+                if k not in ["request_id", "conversation_id", "trace_id"]
+            }
+        )
         return new_logger
 
     def _log(

@@ -1,11 +1,12 @@
 """Abstract base contract for model routing systems."""
 
-from typing import Protocol
+from typing import Protocol, runtime_checkable
 
 from src.ai_agents.enums.provider import ProviderEnum
 from src.ai_agents.schemas.intent import IntentResult
 
 
+@runtime_checkable
 class BaseModelRouter(Protocol):
     """Protocol defining the decision-maker class that assigns LLMs based on intent."""
 

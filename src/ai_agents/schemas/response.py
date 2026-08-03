@@ -8,17 +8,38 @@ from pydantic import BaseModel, Field
 class TokenUsage(BaseModel):
     """Execution token count metrics details."""
 
-    prompt_tokens: int = Field(default=0, ge=0, description="Count of input tokens used.")
-    completion_tokens: int = Field(default=0, ge=0, description="Count of output tokens generated.")
-    total_tokens: int = Field(default=0, ge=0, description="Total tokens consumed (prompt + completion).")
+    prompt_tokens: int = Field(
+        default=0,
+        ge=0,
+        description="Count of input tokens used.",
+    )
+    completion_tokens: int = Field(
+        default=0,
+        ge=0,
+        description="Count of output tokens generated.",
+    )
+    total_tokens: int = Field(
+        default=0,
+        ge=0,
+        description="Total tokens consumed (prompt + completion).",
+    )
 
 
 class AIResponse(BaseModel):
     """Structured response payload returned by the AI assistant."""
 
-    content: str = Field(..., description="The generated natural language response text or markdown.")
-    conversation_id: str = Field(..., description="Unique ID tracking the chat thread.")
-    request_id: str = Field(..., description="Unique ID corresponding to the trigger request.")
+    content: str = Field(
+        ...,
+        description="The generated natural language response text or markdown.",
+    )
+    conversation_id: str = Field(
+        ...,
+        description="Unique ID tracking the chat thread.",
+    )
+    request_id: str = Field(
+        ...,
+        description="Unique ID corresponding to the trigger request.",
+    )
     confidence_score: float = Field(
         default=1.0,
         ge=0.0,
@@ -41,7 +62,10 @@ class AIResponse(BaseModel):
     model_config = {
         "json_schema_extra": {
             "example": {
-                "content": "The iPhone 15 Pro features a 3274 mAh battery, while the Galaxy S24 features a 4000 mAh battery.",
+                "content": (
+                    "The iPhone 15 Pro features a 3274 mAh battery, "
+                    "while the Galaxy S24 features a 4000 mAh battery."
+                ),
                 "conversation_id": "8a52e9f1-3329-4b68-98e3-92f582046842",
                 "request_id": "008c4501-dfa8-4f20-896c-362890e02d60",
                 "confidence_score": 0.95,

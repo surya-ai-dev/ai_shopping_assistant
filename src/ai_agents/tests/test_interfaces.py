@@ -5,6 +5,8 @@ from collections.abc import AsyncGenerator
 import pytest
 from pydantic import BaseModel
 
+from src.ai_agents.contracts.llm import BaseLLMClient
+from src.ai_agents.contracts.tool import BaseTool
 from src.ai_agents.enums.model import ModelSizeEnum
 from src.ai_agents.enums.provider import ProviderEnum
 from src.ai_agents.exceptions import GatewayException, ToolException
@@ -16,7 +18,7 @@ from src.ai_agents.schemas.response import AIResponse
 from src.ai_agents.schemas.tool import ToolRequest, ToolResponse
 
 
-class DummyLLMClient:
+class DummyLLMClient(BaseLLMClient):
     """Mock implementation of BaseLLMClient for testing."""
 
     async def generate(self, request: AIRequest) -> AIResponse:
@@ -38,7 +40,7 @@ class DummyToolArgs(BaseModel):
     param: str
 
 
-class DummyTool:
+class DummyTool(BaseTool):
     """Mock implementation of BaseTool for testing."""
 
     @property

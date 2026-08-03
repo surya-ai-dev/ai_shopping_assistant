@@ -68,6 +68,7 @@ known-first-party = ["src"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**/*.py" = ["PLR2004", "PLR0915"]
+"src/ai_agents/tests/**/*.py" = ["PLR2004"]
 "alembic/versions/*.py" = ["E501"]
 
 [tool.mypy]

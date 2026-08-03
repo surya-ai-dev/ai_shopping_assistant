@@ -1,12 +1,13 @@
 """Abstract base contract for AI planning engines (e.g. LangGraph)."""
 
-from typing import Protocol
+from typing import Protocol, runtime_checkable
 
 from src.ai_agents.schemas.context import ExecutionContext
 from src.ai_agents.schemas.request import AIRequest
 from src.ai_agents.schemas.response import AIResponse
 
 
+@runtime_checkable
 class BasePlanner(Protocol):
     """Protocol defining the interface for the LangGraph planning engine."""
 

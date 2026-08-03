@@ -55,9 +55,21 @@ class AIMetricsCollector:
             prompt_tokens: Input tokens used.
             completion_tokens: Output tokens generated.
         """
-        AI_TOKEN_CONSUMPTION_TOTAL.labels(provider=provider, model=model, token_type="prompt").inc(prompt_tokens)
-        AI_TOKEN_CONSUMPTION_TOTAL.labels(provider=provider, model=model, token_type="completion").inc(completion_tokens)
-        AI_TOKEN_CONSUMPTION_TOTAL.labels(provider=provider, model=model, token_type="total").inc(prompt_tokens + completion_tokens)
+        AI_TOKEN_CONSUMPTION_TOTAL.labels(
+            provider=provider,
+            model=model,
+            token_type="prompt",
+        ).inc(prompt_tokens)
+        AI_TOKEN_CONSUMPTION_TOTAL.labels(
+            provider=provider,
+            model=model,
+            token_type="completion",
+        ).inc(completion_tokens)
+        AI_TOKEN_CONSUMPTION_TOTAL.labels(
+            provider=provider,
+            model=model,
+            token_type="total",
+        ).inc(prompt_tokens + completion_tokens)
 
     @staticmethod
     def record_tool_call(tool_name: str, success: bool) -> None:
@@ -68,7 +80,10 @@ class AIMetricsCollector:
             success: Execution outcome indicator.
         """
         status = "success" if success else "failure"
-        AI_TOOL_EXECUTION_TOTAL.labels(tool_name=tool_name, status=status).inc()
+        AI_TOOL_EXECUTION_TOTAL.labels(
+            tool_name=tool_name,
+            status=status,
+        ).inc()
 
     @staticmethod
     def record_cache_lookup(hit: bool) -> None:
