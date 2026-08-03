@@ -6,6 +6,17 @@ from typing import Final
 CATEGORY_LAPTOP: Final[str] = "laptop"
 CATEGORY_MOBILE: Final[str] = "mobile"
 
+# Category keywords for validation
+LAPTOP_KEYWORDS: Final[list[str]] = [
+    "laptop", "notebook", "ultrabook", "macbook", "chromebook"
+]
+MOBILE_KEYWORDS: Final[list[str]] = [
+    "mobile", "phone", "smartphone", "iphone", "android", "galaxy",
+    "pixel", "oneplus", "nothing phone", "redmi", "xiaomi", "vivo",
+    "oppo", "motorola"
+]
+
+
 # Supported intent classifications
 INTENT_SEARCH_PRODUCT: Final[str] = "SEARCH_PRODUCT"
 INTENT_COMPARE_PRODUCTS: Final[str] = "COMPARE_PRODUCTS"
